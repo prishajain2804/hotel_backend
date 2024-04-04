@@ -13,10 +13,12 @@ const uri =
 const client = new MongoClient(uri);
 
 
-
 const DB_NAME = "hotel";
 
 const COLLECTION_ROOM = "rooms";
+
+
+
 
 router.get("/", async function (req, res) {
   let dbo = await client.db(DB_NAME);
@@ -68,28 +70,19 @@ router.put("/:id", async function (req, res) {
   res.json({ message: "1 record inserted" });
 });
 
-router.delete("/:id", function (req, res) {
+router.delete("/:id", async function (req, res) {
   console.log("I am id= " + req.params.id);
 
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "react",
-    password: "react",
-    database: "cart_app",
-  });
+  
 
-  con.connect(function (err) {
-    if (err) throw err;
-    con.query(
-      `Delete FROM users where id=${req.params.id}`,
-      function (err, result, fields) {
-        if (err) throw err;
-        console.log(result);
-        res.json({ message: "User Deleted" });
-      }
-    );
+  var query = { _id: new ObjectId(req.params.id) };
+  const dbo = await client.db(DB_NAME);
+
+  let data = await  dbo.collection(COLLECTION_ROOM).deleteOne(query);
+    
+    console.log("1 document deleted");
+    res.json({ message: "1 document deleted" });
   });
-});
 
 //Routes will go here
 module.exports = router;
