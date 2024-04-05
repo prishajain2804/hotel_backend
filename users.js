@@ -71,16 +71,34 @@ router.put("/:id", async function (req, res) {
 router.delete("/:id", async function (req, res) {
   console.log("I am id= " + req.params.id);
 
-  
+
 
   var query = { _id: new ObjectId(req.params.id) };
   const dbo = await client.db(DB_NAME);
 
   let data = await  dbo.collection(COLLECTION_USER).deleteOne(query);
-    
+
     console.log("1 document deleted");
     res.json({ message: "1 document deleted" });
   });
+
+router.post("/login", async function (req, res) {
+  let dbo = await client.db(DB_NAME);
+  var myobj = req.body;
+  var query = req.body;
+
+  let data = await dbo.collection(COLLECTION_USER).find(query).toArray();
+  console.log(data);
+  //
+  // console.log(req.body);
+  // const user = req.body;
+  if(data.length > 0){
+    res.json({ message_code: 1001, message: "Login Successfully"});
+  }else{
+    res.json({error_code: -1001,  error_message: "Please check username or password"});
+  }
+
+});
 
 //Routes will go here
 module.exports = router;
